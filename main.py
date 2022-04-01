@@ -86,11 +86,18 @@ def rgb_hack(rgb):
 def scale(r, rmin, rmax, tmin, tmax):
     return ((r - rmin)/(rmax - rmin)) * (tmax -tmin) + tmin
 
-def drawOnCanvas(e):
-    x, y = e.x, e.y
+def increaseBrushWidth():
+    brush_width += 1
 
-    if 4 == 4:
-        r = round(brush_width/2)
+def decreaseBrushWidth():
+    brush_width -= 1
+
+def drawOnCanvas(e):
+    root.update()
+    x, y = e.x, e.y
+    print(x, y)
+    if x < canvas_width + root.winfo_rootx() and y < canvas_height + root.winfo_rooty():
+        r = int(brush_width/2)
 
         sx = x/10
         sy = y/10
@@ -98,36 +105,42 @@ def drawOnCanvas(e):
         for i in range(round(sx), r + round(sx)):
             for j in range(round(sy), r + round(sy)):
                 d2 = (i-sx)**2+(j-sy)**2
-                base_color = int(255 - scale(d2, 0, 2*r**2, 0, 255)) + 1                
+                base_color = int(255 - scale(d2, 0, 2*r**2, 0, 255))                
 
                 #faster way to draw a circle using its symmetries
                 #r^2 instead of (r^2)^2
-                xpoints =[round(i), round(2*sx-i), round(2*sx-i), round(i)]
+                xpoints =[int(i), int(2*sx-i), int(2*sx-i), int(i)]
 
-                ypoints =[round(j), round(2*sy-j), round(j), round(2*sy-j)]    
+                ypoints =[int(j), int(2*sy-j), int(j), int(2*sy-j)]
             
                 color_at_symmetry =[
-                imgdata[xpoints[0], ypoints[0]],
-                imgdata[xpoints[1], ypoints[1]],
-                imgdata[xpoints[2], ypoints[2]],
-                imgdata[xpoints[3], ypoints[3]]
+                imgdata[ypoints[0], xpoints[0]],
+                imgdata[ypoints[1], xpoints[1]],
+                imgdata[ypoints[2], xpoints[2]],
+                imgdata[ypoints[3], xpoints[3]]
                 ]       
                 
-
-                for k in range(4):                    
-                    final_color = color_at_symmetry[k]         
-                    if final_color < base_color:
-                        final_color = base_color
-                    color = rgb_hack((int(final_color), int(final_color), int(final_color)))
-                    canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=color, fill=color)
-                    imgdata[xpoints[k], ypoints[k]] = final_color
+                if d2 < r**2:
+                    for k in range(4):                    
+                        color = ((int(base_color), int(base_color), int(base_color)))      
+                        if base_color > color_at_symmetry[k]:
+                            canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=rgb_hack(color), fill=rgb_hack(color))  
+                            imgdata[ypoints[k], xpoints[k]] = base_color
                     
 #canvas stuff
-brush_width = 6
+brush_width = 5
+canvas_width = 280
+canvas_height = 280
 imgdata = np.zeros((28, 28)) #keep track of color on canvas
-canvas = Canvas(root, width = 280, height = 280, background="black")
+canvas = Canvas(root, width=canvas_width, height=canvas_height, background="black")
 canvas.grid(row=0, column=0)
+canvas.bind("<ButtonPress-1>", drawOnCanvas)
 canvas.bind("<B1-Motion>", drawOnCanvas)
+
+button_inc = Button(root, text="Increase Brush Size", padx=40, pady=20, command=increaseBrushWidth)
+button_dec = Button(root, text="Decrease Brush Size", padx=40, pady=20, command=decreaseBrushWidth)
+button_inc.grid(row=0, column=2)
+button_dec.grid(row=1, column=2)
 
 #define all of the buttons size, text, and function which they call
 button_knn = Button(root, text="Test K-Nearest Neighbour", padx=40, pady=20, command=run_knn)
