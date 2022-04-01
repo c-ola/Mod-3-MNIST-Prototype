@@ -1,3 +1,5 @@
+#video for adrian https://youtu.be/yuuDJ3-EdNQ?list=PLCC34OHNcOtoC6GglhF3ncJ5rLwQrLGnV
+
 from tkinter import *
 import numpy as np
 import matplotlib.pyplot as plot
@@ -19,7 +21,7 @@ import matplotlib.pyplot as plt
 
 root = Tk()
 root.title("Machine Learning Models: Accuracy Testing")
-root.geometry("800x800")
+root.geometry("1400x600")
 
 def run_knn():
 
@@ -55,18 +57,30 @@ def run_nbc():
     testNum = 10000
     xTrain = xTrain.reshape(60000, 28 * 28)
     xTest = xTest.reshape(10000, 28 * 28)
-    NBC_training = Label(root, text='Begin Training')
-    #NBC_training.grid(row=1, column=2)
+    nbc_training = Label(root, text='Begin training')
+    nbc_training.grid(row=2, column=3)
     naive_bayes_multinomial = MultinomialNB()
     fit_multinomial = naive_bayes_multinomial.fit(xTrain, yTrain)
     predictions = fit_multinomial.predict(xTest)
     con_matrix_multinomial = confusion_matrix(yTest, predictions)
-    print("Finished Training\n")
+
+    nbc_training2 = Label(root, text='Finished training')
+    nbc_training2.grid(row=3, column=3)
 
     print("Begin Testing")
+    nbc_testing = Label(root, text='Begin testing')
+    nbc_testing.grid(row=4, column=3)
+
     print(fit_multinomial.score(xTest, yTest))
     print(con_matrix_multinomial)
     print("Finish Testing")
+
+    nbc_testing = Label(root, text='Finished testing')
+    nbc_testing.grid(row=5, column=3)
+
+    nbc_accuracy = Label(root, text=f'Accuracy is {fit_multinomial.score(xTest, yTest) * 100}%')
+    nbc_accuracy.grid(row=6, column=3)
+
 
 
     return
@@ -154,11 +168,11 @@ button_quit = Button(root, text="Exit", padx=40, pady=20, command=root.quit)
 #put the buttons on the screen
 
 button_knn.grid(row=0, column=1)
-button_cnn.grid(row=1, column=1)
-button_nbc.grid(row=2, column=1)
-button_combined.grid(row=3, column=1)
+button_cnn.grid(row=0, column=2)
+button_nbc.grid(row=0, column=3)
+button_combined.grid(row=0, column=4)
 
-button_quit.grid(row=5, column=3)
+button_quit.grid(row=5, column=4)
 
 #Text boxes
 
