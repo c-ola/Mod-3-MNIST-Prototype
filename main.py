@@ -21,7 +21,7 @@ root = Tk()
 root.title("Machine Learning Models: Accuracy Testing")
 
 canvas = Canvas(root, width = 400, height = 400)
-canvas.pack()
+canvas.grid()
 
 def run_knn():
 
@@ -84,7 +84,8 @@ def run_combined():
 
 def drawOnCanvas(e):
     x, y = e.x, e.y
-    canvas.create_rectangle(x, y, x+10, y+10, outline="#fb0", fill="#fb0")
+    if e.type == 4:
+        canvas.create_rectangle(x, y, x+10, y+10, outline="#fb0", fill="#fb0")
 
 
 
@@ -98,6 +99,7 @@ button_quit = Button(root, text="Exit", padx=40, pady=20, command=root.quit)
 root.bind('<Motion>', drawOnCanvas)
 
 #put the buttons on the screen
+
 button_knn.grid(row=0, column=0)
 button_cnn.grid(row=0, column=1)
 button_nbc.grid(row=0, column=2)
@@ -106,11 +108,6 @@ button_combined.grid(row=0, column=3)
 button_quit.grid(row=5, column=3)
 
 #Text boxes
-
-'''#drawing stuff
-canvas = tk.Canvas(root, width=400, height=400)
-canvas.pack()
-'''
 
 root.mainloop()
 
