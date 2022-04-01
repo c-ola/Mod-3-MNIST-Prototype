@@ -115,16 +115,13 @@ def drawOnCanvas(e):
                 
 
                 for k in range(4):                    
-                    final_color = color_at_symmetry[k] 
-                    print(final_color, base_color)         
+                    final_color = color_at_symmetry[k]         
                     if final_color < base_color:
                         final_color = base_color
-                    color = rgb_hack((final_color, final_color, final_color))
+                    color = rgb_hack((int(final_color), int(final_color), int(final_color)))
                     canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=color, fill=color)
                     imgdata[xpoints[k], ypoints[k]] = final_color
                     
-
-        
 #canvas stuff
 brush_width = 6
 imgdata = np.zeros((28, 28)) #keep track of color on canvas
