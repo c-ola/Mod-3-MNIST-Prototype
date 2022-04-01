@@ -19,9 +19,10 @@ import matplotlib.pyplot as plt
 
 root = Tk()
 root.title("Machine Learning Models: Accuracy Testing")
+root.geometry("800x800")
 
-canvas = Canvas(root, width = 400, height = 400)
-canvas.grid()
+canvas = Canvas(root, width = 280, height = 280, background="black")
+canvas.grid(row=0, column=0)
 
 def run_knn():
 
@@ -82,12 +83,53 @@ def run_cnn():
 def run_combined():
     return
 
+def rgb_hack(rgb):
+    return "#%02x%02x%02x" % rgb
+
+def scale(r, rmin, rmax, tmin, tmax):
+    return ((r - rmin)/(rmax - rmin)) * (tmax -tmin) + tmin
+
 def drawOnCanvas(e):
     x, y = e.x, e.y
-    if e.type == 4:
-        canvas.create_rectangle(x, y, x+10, y+10, outline="#fb0", fill="#fb0")
 
+    if 4 == 4:
+        r = round(brush_width/2)
 
+        sx = x/10
+        sy = y/10
+
+        for i in range(round(sx), r + round(sx)):
+            for j in range(round(sy), r + round(sy)):
+                d2 = (i-sx)**2+(j-sy)**2
+                base_color = int(255 - scale(d2, 0, 2*r**2, 0, 255)) + 1                
+
+                #faster way to draw a circle using its symmetries
+                #r^2 instead of (r^2)^2
+                xpoints =[round(i)*10, round(2*sx-i)*10, round(2*sx-i)*10, round(i)*10]
+
+                ypoints =[round(j)*10, round(2*sy-j)*10, round(j)*10, round(2*sy-j)*10]    
+
+                """
+                color_at_symmetry =[
+                img.pixelColor(xpoints[0], ypoints[0]),
+                img.pixelColor(xpoints[1], ypoints[1]),
+                img.pixelColor(xpoints[2], ypoints[2]),
+                img.pixelColor(xpoints[3], ypoints[3])
+                ]       
+                """
+
+                for k in range(4):
+                    canvas.create_rectangle(xpoints[k], ypoints[k], xpoints[k]+10, ypoints[k]+10, outline='#ffffff', fill='#ffffff')
+                    """
+                    final_color = color_at_symmetry[k]          
+                    if color_at_symmetry[k].red() < base_color:
+                        final_color = QtGui.QColor(base_color, base_color, base_color)
+                    painter.fillRect(xpoints[k], ypoints[k], 10, 10, final_color)
+                    """
+
+        
+
+brush_width = 6
 
 #define all of the buttons size, text, and function which they call
 button_knn = Button(root, text="Test K-Nearest Neighbour", padx=40, pady=20, command=run_knn)
@@ -100,10 +142,10 @@ root.bind('<Motion>', drawOnCanvas)
 
 #put the buttons on the screen
 
-button_knn.grid(row=0, column=0)
-button_cnn.grid(row=0, column=1)
-button_nbc.grid(row=0, column=2)
-button_combined.grid(row=0, column=3)
+button_knn.grid(row=0, column=1)
+button_cnn.grid(row=1, column=1)
+button_nbc.grid(row=2, column=1)
+button_combined.grid(row=3, column=1)
 
 button_quit.grid(row=5, column=3)
 
