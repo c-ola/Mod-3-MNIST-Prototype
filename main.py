@@ -23,9 +23,6 @@ root = Tk()
 root.title("Machine Learning Models: Accuracy Testing")
 root.geometry("1400x600")
 
-canvas = Canvas(root, width = 280, height = 280, background="black")
-canvas.grid(row=0, column=0)
-
 def run_knn():
 
   '''# #loading data
@@ -119,31 +116,35 @@ def drawOnCanvas(e):
 
                 #faster way to draw a circle using its symmetries
                 #r^2 instead of (r^2)^2
-                xpoints =[round(i)*10, round(2*sx-i)*10, round(2*sx-i)*10, round(i)*10]
+                xpoints =[round(i), round(2*sx-i), round(2*sx-i), round(i)]
 
-                ypoints =[round(j)*10, round(2*sy-j)*10, round(j)*10, round(2*sy-j)*10]    
-
-                """
+                ypoints =[round(j), round(2*sy-j), round(j), round(2*sy-j)]    
+            
                 color_at_symmetry =[
-                img.pixelColor(xpoints[0], ypoints[0]),
-                img.pixelColor(xpoints[1], ypoints[1]),
-                img.pixelColor(xpoints[2], ypoints[2]),
-                img.pixelColor(xpoints[3], ypoints[3])
+                imgdata[xpoints[0], ypoints[0]],
+                imgdata[xpoints[1], ypoints[1]],
+                imgdata[xpoints[2], ypoints[2]],
+                imgdata[xpoints[3], ypoints[3]]
                 ]       
-                """
+                
 
-                for k in range(4):
-                    canvas.create_rectangle(xpoints[k], ypoints[k], xpoints[k]+10, ypoints[k]+10, outline='#ffffff', fill='#ffffff')
-                    """
-                    final_color = color_at_symmetry[k]          
-                    if color_at_symmetry[k].red() < base_color:
-                        final_color = QtGui.QColor(base_color, base_color, base_color)
-                    painter.fillRect(xpoints[k], ypoints[k], 10, 10, final_color)
-                    """
+                for k in range(4):                    
+                    final_color = color_at_symmetry[k] 
+                    print(final_color, base_color)         
+                    if final_color < base_color:
+                        final_color = base_color
+                    color = rgb_hack((final_color, final_color, final_color))
+                    canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=color, fill=color)
+                    imgdata[xpoints[k], ypoints[k]] = final_color
+                    
 
         
-
+#canvas stuff
 brush_width = 6
+imgdata = np.zeros((28, 28)) #keep track of color on canvas
+canvas = Canvas(root, width = 280, height = 280, background="black")
+canvas.grid(row=0, column=0)
+canvas.bind("<B1-Motion>", drawOnCanvas)
 
 #define all of the buttons size, text, and function which they call
 button_knn = Button(root, text="Test K-Nearest Neighbour", padx=40, pady=20, command=run_knn)
@@ -152,7 +153,7 @@ button_nbc = Button(root, text="Test Naive Bayes Classifier", padx=40, pady=20, 
 button_combined = Button(root, text="Test combination of all models", padx=40, pady=20, command=run_combined)
 
 button_quit = Button(root, text="Exit", padx=40, pady=20, command=root.quit)
-root.bind('<Motion>', drawOnCanvas)
+
 
 #put the buttons on the screen
 
