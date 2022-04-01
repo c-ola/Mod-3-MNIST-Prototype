@@ -1,9 +1,3 @@
-#changes for github testing
-##
-#
-#
-#
-a = 0
 from tkinter import *
 import numpy as np
 import matplotlib.pyplot as plot
@@ -90,7 +84,7 @@ def run_combined():
 
 def drawOnCanvas(e):
     x, y = e.x, e.y
-    canvas.create_line(x, y, x+1, y+1)
+    canvas.create_rectangle(x, y, x+10, y+10, outline="#fb0", fill="#fb0")
 
 
 
