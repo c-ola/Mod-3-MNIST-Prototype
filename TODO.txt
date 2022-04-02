@@ -1,0 +1,4 @@
+THINGS TO DO/RECOMMENDATIONS FOR WHAT TO DO
+-
+-add capability to chose between drawn image and test image
+-maybe add capability to get accuracy of range of images? (will probably require modification of combined model)

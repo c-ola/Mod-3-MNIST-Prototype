@@ -24,10 +24,11 @@ root.title("Machine Learning Models: Accuracy Testing")
 root.geometry("1400x600")
 
 def run_knn():
-
-  '''# #loading data
-  (X_train, y_train), (X_test, y_test) = mnist.load_data()
-  # #reshaping data
+    print(combined.knn_pred(torch.from_numpy(imgdata)))
+"""
+# #loading data
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+# #reshaping data
   X_train = X_train[:60000]
   y_train = y_train[:60000]
   X_test = X_test[:1000]
@@ -48,10 +49,12 @@ def run_knn():
   print("Real Label:", y_test[num])
   plt.show()
   print(f"Predicted Label: {int(combined.knn_pred(X_test[num]))}")
-'''
-  print("ran function")
+"""
+    
 
 def run_nbc():
+    print(combined.naive_bayes_pred(torch.from_numpy(imgdata)))
+    """
     (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
     trainNum = 20000
     testNum = 10000
@@ -80,18 +83,15 @@ def run_nbc():
 
     nbc_accuracy = Label(root, text=f'Accuracy is {fit_multinomial.score(xTest, yTest) * 100}%')
     nbc_accuracy.grid(row=6, column=3)
-
-
-
-    return
+    """
 #nbc code
 
-
 def run_cnn():
+    print(combined.cnn_pred(torch.from_numpy(imgdata)).argmax()) 
     return
 
-
 def run_combined():
+    print(combined.combined_out(torch.from_numpy(imgdata))) 
     return
 
 def rgb_hack(rgb):
@@ -100,61 +100,75 @@ def rgb_hack(rgb):
 def scale(r, rmin, rmax, tmin, tmax):
     return ((r - rmin)/(rmax - rmin)) * (tmax -tmin) + tmin
 
-def increaseBrushWidth():
-    brush_width += 1
-
 def decreaseBrushWidth():
-    brush_width -= 1
+    global brush_width
+    minBrush = 1
+    if brush_width > minBrush + 1:
+        brush_width-=1
+
+def increaseBrushWidth():
+    global brush_width
+    maxBrush = 20
+    if brush_width < maxBrush:
+        brush_width+=1
+
+def resetCanvas():
+    global imgdata
+    root.update()
+    imgdata = np.zeros((28, 28))    
+    canvas.delete('all')
 
 def drawOnCanvas(e):
     root.update()
     x, y = e.x, e.y
-    print(x, y)
-    if x < canvas_width + root.winfo_rootx() and y < canvas_height + root.winfo_rooty():
-        r = int(brush_width/2)
 
-        sx = x/10
-        sy = y/10
+    r = int(brush_width/2)
 
-        for i in range(round(sx), r + round(sx)):
-            for j in range(round(sy), r + round(sy)):
-                d2 = (i-sx)**2+(j-sy)**2
-                base_color = int(255 - scale(d2, 0, 2*r**2, 0, 255))                
+    sx = x/10
+    sy = y/10
 
-                #faster way to draw a circle using its symmetries
-                #r^2 instead of (r^2)^2
-                xpoints =[int(i), int(2*sx-i), int(2*sx-i), int(i)]
+    for i in range(int(sx), r + int(sx)):
+        for j in range(int(sy), r + int(sy)):
+            d2 = (i-sx)**2+(j-sy)**2
+            base_color = int(255 - scale(d2, 0, r**2, 0, 255))                
 
-                ypoints =[int(j), int(2*sy-j), int(j), int(2*sy-j)]
+            #faster way to draw a circle using its symmetries
+            #r^2 instead of (r^2)^2
+            xpoints =[int(i), int(2*sx-i), int(2*sx-i), int(i)]
+
+            ypoints =[int(j), int(2*sy-j), int(j), int(2*sy-j)]
+        
+            color_at_symmetry =[
+            imgdata[ypoints[0], xpoints[0]],
+            imgdata[ypoints[1], xpoints[1]],
+            imgdata[ypoints[2], xpoints[2]],
+            imgdata[ypoints[3], xpoints[3]]
+            ]       
             
-                color_at_symmetry =[
-                imgdata[ypoints[0], xpoints[0]],
-                imgdata[ypoints[1], xpoints[1]],
-                imgdata[ypoints[2], xpoints[2]],
-                imgdata[ypoints[3], xpoints[3]]
-                ]       
-                
-                if d2 < r**2:
-                    for k in range(4):                    
-                        color = ((int(base_color), int(base_color), int(base_color)))      
-                        if base_color > color_at_symmetry[k]:
-                            canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=rgb_hack(color), fill=rgb_hack(color))  
-                            imgdata[ypoints[k], xpoints[k]] = base_color
-                    
+            if d2 < r**2:
+                for k in range(4):                    
+                    color = ((int(base_color), int(base_color), int(base_color)))      
+                    if base_color > color_at_symmetry[k]:
+                        canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=rgb_hack(color), fill=rgb_hack(color))  
+                        imgdata[ypoints[k], xpoints[k]] = base_color
+
 #canvas stuff
 brush_width = 5
 canvas_width = 280
 canvas_height = 280
 imgdata = np.zeros((28, 28)) #keep track of color on canvas
-canvas = Canvas(root, width=canvas_width, height=canvas_height, background="black")
+canvas = Canvas(root, width=canvas_width, height=canvas_height, bg="black")
 canvas.grid(row=0, column=0)
 canvas.bind("<ButtonPress-1>", drawOnCanvas)
 canvas.bind("<B1-Motion>", drawOnCanvas)
 
-button_inc = Button(root, text="Increase Brush Size", padx=40, pady=20, command=increaseBrushWidth)
-button_dec = Button(root, text="Decrease Brush Size", padx=40, pady=20, command=decreaseBrushWidth)
-button_inc.grid(row=0, column=2)
-button_dec.grid(row=1, column=2)
+#buttons regarding the canvas
+button_inc = Button(root, text="Increase Brush Size", padx=20, pady=20, command=increaseBrushWidth)
+button_inc.grid(row=1, column=0)
+button_dec = Button(root, text="Decrease Brush Size", padx=20, pady=20, command=decreaseBrushWidth)
+button_dec.grid(row=2, column=0)
+button_reset_canvas = Button(root, text="Reset Canvas", padx=20, pady=20, command=resetCanvas)
+button_reset_canvas.grid(row=3, column=0)
 
 #define all of the buttons size, text, and function which they call
 button_knn = Button(root, text="Test K-Nearest Neighbour", padx=40, pady=20, command=run_knn)

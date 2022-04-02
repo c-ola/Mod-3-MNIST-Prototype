@@ -164,7 +164,7 @@ class Combined():
 
     prediction = arrayKNNLabels[-1]
 
-    return prediction
+    return int(prediction)
 
 
   def combined_out(self, image):
