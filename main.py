@@ -1,5 +1,3 @@
-#video for adrian https://youtu.be/yuuDJ3-EdNQ?list=PLCC34OHNcOtoC6GglhF3ncJ5rLwQrLGnV
-
 from tkinter import *
 import numpy as np
 import matplotlib.pyplot as plot
@@ -23,30 +21,70 @@ import matplotlib.pyplot as plt
 
 root = Tk()
 root.title("Machine Learning Models: Accuracy Testing")
-root.geometry("1400x600")
+root.geometry("1200x700")
 
 def run_knn():
     print(combined.knn_pred(7))
-    plt.imshow(test_images[7].reshape(28, 28))
-    plt.show()
+    # plt.imshow(test_images[7].reshape(28, 28))
+    # plt.show()
+    def knn_predict():
+        x = combined.knn_pred(int(index.get()))
+        print(x)
 
-def run_nbc():
+        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nKNN predicted label: {x}")
+        output.grid(row=3, column=1)
+
+        plt.imshow(test_images[int(index.get())].reshape(28, 28))
+        plt.show()
 
     index = Entry(root, width=10)
-    index.grid(row=1, column=3)
-    #button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=nbc_predict)
+    index.grid(row=2, column=1)
 
-    #index.insert(0, "Enter an index for the MNIST dataset")
+    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=knn_predict)
+    button_index.grid(row=1, column=1)
 
-    print(combined.naive_bayes_pred(int(index.get())))
+def run_nbc():
+    def nbc_predict():
+        x = combined.naive_bayes_pred(int(index.get()))
+        print(x)
 
-def nbc_predict():
-    combined.naive_bayes_pred(int(index.get()))
+        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nPredicted label: {x}")
+        output.grid(row=3, column=1)
+
+        plt.imshow(test_images[int(index.get())].reshape(28, 28))
+        plt.show()
+
+    index = Entry(root, width=10)
+    index.grid(row=2, column=1)
+
+    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=nbc_predict)
+    button_index.grid(row=1, column=1)
+
+
+
+
 
 
 
 def run_cnn():
-    print(combined.cnn_pred(7))
+    def cnn_predict():
+        #x = combined.cnn_pred(int(index.get().argmax()))
+
+        x = int(combined.cnn_pred(int(index.get())).argmax())
+
+        print(x)
+
+        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nPredicted label: {x}")
+        output.grid(row=3, column=1)
+
+        plt.imshow(test_images[int(index.get())].reshape(28, 28))
+        plt.show()
+
+    index = Entry(root, width=10)
+    index.grid(row=2, column=1)
+
+    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=cnn_predict)
+    button_index.grid(row=1, column=1)
     return
 
 def run_combined():
@@ -143,21 +181,30 @@ button_combined = Button(root, text="Test combination of all models", padx=40, p
 
 button_testDrawing = Button(root, text="Test canvas", padx=40, pady=20, command=test_drawing)
 
-button_quit = Button(root, text="Exit", padx=40, pady=20, command=root.quit)
-
+button_quit = Button(root, text="Exit", padx=40, pady=40, command=root.quit)
 
 #put the buttons on the screen
 
-button_knn.grid(row=0, column=1)
-button_cnn.grid(row=0, column=2)
-button_nbc.grid(row=0, column=3)
-button_combined.grid(row=0, column=4)
+button_knn.grid(row=1, column=4)
+button_cnn.grid(row=2, column=4)
+button_nbc.grid(row=3, column=4)
+button_combined.grid(row=4, column=4)
 
-button_testDrawing.grid(row=5, column=0)
+button_testDrawing.grid(row=4, column=0)
 
 button_quit.grid(row=5, column=4)
 
-#Text boxes
+#Blank boxes for cell formatting
+
+blank1 = Label(root, text=" ", padx=80)
+blank2 = Label(root, text=" ", padx=80)
+blank3 = Label(root, text=" ", padx=80)
+
+
+blank1.grid(row=0, column=1)
+blank2.grid(row=0, column=2)
+blank3.grid(row=0, column=3)
+
 
 root.mainloop()
 
