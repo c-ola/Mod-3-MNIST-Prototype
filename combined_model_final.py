@@ -131,14 +131,16 @@ class Combined():
 
   def cnn_pred(self, index):
 
-    image = self.test_images[index]
+    #image = self.test_images[index]
+    image = index
     prediction = cnn.forward(image)
 
     return prediction # outputs a 1x10 tensor of 
 
 
   def naive_bayes_pred(self, index):
-    image = self.test_images[index]
+    #image = self.test_images[index]
+    image = index
     image = image.reshape(28*28, ).numpy().astype(int)
 
     prediction = mnb.predict([image])
@@ -148,7 +150,8 @@ class Combined():
 
   def knn_pred(self, index):
 
-    image = self.test_images[index]
+    #image = self.test_images[index]
+    image = index
     image = image.reshape(28, 28).numpy()
 
     arrayKNNLabels = np.array([])

@@ -25,80 +25,67 @@ root.geometry("1200x700")
 
 
 def run_knn():
-    print(combined.knn_pred(7))
+    text = ""
+    if use_drawing:
+        x = combined.knn_pred(torch.from_numpy(imgdata))
+        text = f"KNN prediction: {x}"
+    else:
+        x = combined.knn_pred(test_images[int(index.get())])
+        text = f"Real label: {test_labels[int(index.get())]}\nKNN prediction: {x}"
 
-    def knn_predict():
-        x = combined.knn_pred(int(index.get()))
-        print(x)
+    print(x)
 
-        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nKNN predicted label: {x}")
-        output.grid(row=3, column=2)
-
-        plt.imshow(test_images[int(index.get())].reshape(28, 28))
-        plt.show()
-
-    index = Entry(root, width=10)
-    index.grid(row=2, column=2)
-
-    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=knn_predict)
-    button_index.grid(row=1, column=2)
+    output = Label(root, text=text)
+    output.grid(row=3, column=2)
 
 
 def run_nbc():
-    def nbc_predict():
-        x = combined.naive_bayes_pred(int(index.get()))
-        print(x)
+    text = ""
+    if use_drawing:
+        x = combined.naive_bayes_pred(torch.from_numpy(imgdata))
+        text = f"Naive Bayes prediction: {x}"
+    else:
+        x = combined.naive_bayes_pred(test_images[int(index.get())])
+        text = f"Real label: {test_labels[int(index.get())]}\nNaive Bayes prediction: {x}"
 
-        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nNBC predicted label: {x}")
-        output.grid(row=3, column=2)
+    print(x)
 
-        plt.imshow(test_images[int(index.get())].reshape(28, 28))
-        plt.show()
-
-    index = Entry(root, width=10)
-    index.grid(row=2, column=2)
-
-    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=nbc_predict)
-    button_index.grid(row=1, column=2)
+    output = Label(root, text=text)
+    output.grid(row=3, column=2)
 
 
 def run_cnn():
-    def cnn_predict():
-        x = int(combined.cnn_pred(int(index.get())).argmax())
-        print(x)
+    text = ""
+    if use_drawing:
+        x = combined.cnn_pred(torch.from_numpy(imgdata)).argmax()
+        text = f"CNN prediction: {x}"
+    else:
+        x = combined.cnn_pred(test_images[int(index.get())]).argmax()
+        text = f"Real label: {test_labels[int(index.get())]}\nCNN prediction: {x}"
 
-        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nCNN predicted label: {x}")
-        output.grid(row=3, column=2)
+    print(x)
 
-        plt.imshow(test_images[int(index.get())].reshape(28, 28))
-        plt.show()
-
-    index = Entry(root, width=10)
-    index.grid(row=2, column=2)
-
-    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=cnn_predict)
-    button_index.grid(row=1, column=2)
+    output = Label(root, text=text)
+    output.grid(row=3, column=2)
     return
 
 
 def run_combined():
-    print(combined.combined_out(7))
+    text = ""
+    if use_drawing:
+        x = combined.combined_out(torch.from_numpy(imgdata))
+        text = f"Combined prediction: {x}"
+    else:
+        x = combined.combined_out(test_images[int(index.get())])
+        text = f"Real label: {test_labels[int(index.get())]}\nCombined prediction: {x}"
 
-    def combined_predict():
-        x = combined.combined_out(int(index.get()))
-        print(x)
+    print(x)
 
-        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nCombined prediction: {x}")
-        output.grid(row=3, column=2)
+    output = Label(root, text=text)
+    output.grid(row=3, column=2)
 
-        plt.imshow(test_images[int(index.get())].reshape(28, 28))
-        plt.show()
-
-    index = Entry(root, width=10)
-    index.grid(row=2, column=2)
-
-    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=combined_predict)
-    button_index.grid(row=1, column=2)
+   # plt.imshow(test_images[int(index.get())].reshape(28, 28))
+  #  plt.show()
 
     return
 
@@ -166,18 +153,20 @@ def drawOnCanvas(e):
                         canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=rgb_hack(color), fill=rgb_hack(color))  
                         imgdata[ypoints[k], xpoints[k]] = base_color
 
-
+"""
 def test_drawing():
     print(np.array(imgdata).reshape(1, 28, 28))
     model = combined_model_final.Combined(np.array(imgdata).reshape(1, 28, 28), [0])
 
     prediction = Label(root, text=f"Prediction for drawing: {model.combined_out(0)}")
     prediction.grid(row=5, column=0)
+"""
 
 #canvas stuff
 brush_width = 5
 canvas_width = 280
 canvas_height = 280
+use_drawing = IntVar()
 imgdata = np.zeros((28, 28)) #keep track of color on canvas
 canvas = Canvas(root, width=canvas_width, height=canvas_height, bg="black")
 canvas.grid(row=0, column=0)
@@ -191,6 +180,11 @@ button_dec = Button(root, text="Decrease Brush Size", padx=20, pady=20, command=
 button_dec.grid(row=2, column=0)
 button_reset_canvas = Button(root, text="Reset Canvas", padx=20, pady=20, command=resetCanvas)
 button_reset_canvas.grid(row=3, column=0)
+check_drawing = Checkbutton(root, text='Use Drawing for Tests', variable=use_drawing)
+check_drawing.grid(row=4, column=0)
+
+index = Entry(root, width=10)
+index.grid(row=2, column=2)
 
 #define all of the buttons size, text, and function which they call
 button_knn = Button(root, text="Test K-Nearest Neighbour", padx=40, pady=20, command=run_knn)
@@ -198,7 +192,7 @@ button_cnn = Button(root, text="Test Convolutional Neural Network", padx=40, pad
 button_nbc = Button(root, text="Test Naive Bayes Classifier", padx=40, pady=20, command=run_nbc)
 button_combined = Button(root, text="Test combination of all models", padx=40, pady=20, command=run_combined)
 
-button_testDrawing = Button(root, text="Test canvas", padx=40, pady=20, command=test_drawing)
+#button_testDrawing = Button(root, text="Test canvas", padx=40, pady=20, command=test_drawing)
 
 button_quit = Button(root, text="Exit", padx=40, pady=40, command=root.quit)
 
@@ -209,7 +203,7 @@ button_cnn.grid(row=2, column=4)
 button_nbc.grid(row=3, column=4)
 button_combined.grid(row=4, column=4)
 
-button_testDrawing.grid(row=4, column=0)
+#button_testDrawing.grid(row=4, column=0)
 
 button_quit.grid(row=5, column=4)
 
