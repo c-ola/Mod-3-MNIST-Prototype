@@ -5,17 +5,19 @@ import numpy as np
 import matplotlib.pyplot as plot
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import confusion_matrix
-from tensorflow.keras.datasets import mnist
 from sklearn import datasets, neighbors
 from sklearn.model_selection import train_test_split
 import torch
 
 import combined_model_final
+import mnist
 
-combined = combined_model_final.Combined()
+test_images = mnist.test_images()
+test_labels = mnist.test_labels()
+
+combined = combined_model_final.Combined(test_images, test_labels)
 
 
-# import mnist
 # import numpy as np
 import matplotlib.pyplot as plt
 
@@ -24,74 +26,31 @@ root.title("Machine Learning Models: Accuracy Testing")
 root.geometry("1400x600")
 
 def run_knn():
-    print(combined.knn_pred(torch.from_numpy(imgdata)))
-"""
-# #loading data
-(X_train, y_train), (X_test, y_test) = mnist.load_data()
-# #reshaping data
-  X_train = X_train[:60000]
-  y_train = y_train[:60000]
-  X_test = X_test[:1000]
-  y_test = y_test[:1000]
-  #
-  X_train = X_train.reshape((60000, 28 * 28))
-  X_test = X_test.reshape((1000, 28 * 28))
-  #
-  num = int(input("Enter number:"))
-  #
-  #creating and training knn classifier
-  knn = neighbors.KNeighborsClassifier(n_neighbors=3, weights='uniform')
-  knn.fit(X_train, y_train)
-  #
-  #getting a prediction
-  pred = knn.predict(X_test)
-  plt.imshow(X_test[num].reshape(28, 28))
-  print("Real Label:", y_test[num])
-  plt.show()
-  print(f"Predicted Label: {int(combined.knn_pred(X_test[num]))}")
-"""
-    
+    print(combined.knn_pred(7))
+    plt.imshow(test_images[7].reshape(28, 28))
+    plt.show()
 
 def run_nbc():
-    print(combined.naive_bayes_pred(torch.from_numpy(imgdata)))
-    """
-    (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
-    trainNum = 20000
-    testNum = 10000
-    xTrain = xTrain.reshape(60000, 28 * 28)
-    xTest = xTest.reshape(10000, 28 * 28)
-    nbc_training = Label(root, text='Begin training')
-    nbc_training.grid(row=2, column=3)
-    naive_bayes_multinomial = MultinomialNB()
-    fit_multinomial = naive_bayes_multinomial.fit(xTrain, yTrain)
-    predictions = fit_multinomial.predict(xTest)
-    con_matrix_multinomial = confusion_matrix(yTest, predictions)
 
-    nbc_training2 = Label(root, text='Finished training')
-    nbc_training2.grid(row=3, column=3)
+    index = Entry(root, width=10)
+    index.grid(row=1, column=3)
+    #button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=nbc_predict)
 
-    print("Begin Testing")
-    nbc_testing = Label(root, text='Begin testing')
-    nbc_testing.grid(row=4, column=3)
+    #index.insert(0, "Enter an index for the MNIST dataset")
 
-    print(fit_multinomial.score(xTest, yTest))
-    print(con_matrix_multinomial)
-    print("Finish Testing")
+    print(combined.naive_bayes_pred(int(index.get())))
 
-    nbc_testing = Label(root, text='Finished testing')
-    nbc_testing.grid(row=5, column=3)
+def nbc_predict():
+    combined.naive_bayes_pred(int(index.get()))
 
-    nbc_accuracy = Label(root, text=f'Accuracy is {fit_multinomial.score(xTest, yTest) * 100}%')
-    nbc_accuracy.grid(row=6, column=3)
-    """
-#nbc code
+
 
 def run_cnn():
-    print(combined.cnn_pred(torch.from_numpy(imgdata)).argmax()) 
+    print(combined.cnn_pred(7))
     return
 
 def run_combined():
-    print(combined.combined_out(torch.from_numpy(imgdata))) 
+    print(combined.combined_out(7))
     return
 
 def rgb_hack(rgb):
@@ -152,6 +111,12 @@ def drawOnCanvas(e):
                         canvas.create_rectangle(xpoints[k]*10, ypoints[k]*10, xpoints[k]*10+10, ypoints[k]*10+10, outline=rgb_hack(color), fill=rgb_hack(color))  
                         imgdata[ypoints[k], xpoints[k]] = base_color
 
+
+def test_drawing():
+    print(np.array(imgdata).reshape(1, 28, 28))
+    model = combined_model_final.Combined(np.array(imgdata).reshape(1, 28, 28), [0])
+    print(f"Prediction for drawing: {model.combined_out(0)}")
+
 #canvas stuff
 brush_width = 5
 canvas_width = 280
@@ -176,6 +141,8 @@ button_cnn = Button(root, text="Test Convolutional Neural Network", padx=40, pad
 button_nbc = Button(root, text="Test Naive Bayes Classifier", padx=40, pady=20, command=run_nbc)
 button_combined = Button(root, text="Test combination of all models", padx=40, pady=20, command=run_combined)
 
+button_testDrawing = Button(root, text="Test canvas", padx=40, pady=20, command=test_drawing)
+
 button_quit = Button(root, text="Exit", padx=40, pady=20, command=root.quit)
 
 
@@ -185,6 +152,8 @@ button_knn.grid(row=0, column=1)
 button_cnn.grid(row=0, column=2)
 button_nbc.grid(row=0, column=3)
 button_combined.grid(row=0, column=4)
+
+button_testDrawing.grid(row=5, column=0)
 
 button_quit.grid(row=5, column=4)
 

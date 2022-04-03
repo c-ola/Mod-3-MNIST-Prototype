@@ -125,20 +125,20 @@ arrayKNNLabels = np.append(arrayKNNLabels, values[np.argmax(counts)])#gets the m
 class Combined():
 
   def __init__(self, test_images, test_labels):
-    self.test_images = test_images
-    self.test_labels = test_labels
+    self.test_images = torch.tensor(test_images)
+    self.test_labels = torch.tensor(test_labels)
 
 
   def cnn_pred(self, index):
 
-    image = test_images[index]
+    image = self.test_images[index]
     prediction = cnn.forward(image)
 
     return prediction # outputs a 1x10 tensor of 
 
 
   def naive_bayes_pred(self, index):
-    image = test_images[index]
+    image = self.test_images[index]
     image = image.reshape(28*28, ).numpy().astype(int)
 
     prediction = mnb.predict([image])
@@ -148,7 +148,7 @@ class Combined():
 
   def knn_pred(self, index):
 
-    image = test_images[index]
+    image = self.test_images[index]
     image = image.reshape(28, 28).numpy()
 
     arrayKNNLabels = np.array([])
