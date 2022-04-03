@@ -26,68 +26,90 @@ root.geometry("1200x700")
 
 def run_knn():
     text = ""
-    if use_drawing:
-        x = combined.knn_pred(torch.from_numpy(imgdata))
+    img = None
+
+    if use_drawing.get():
+        img = imgdata
+        x = int(combined.knn_pred(torch.from_numpy(imgdata)))
         text = f"KNN prediction: {x}"
     else:
-        x = combined.knn_pred(test_images[int(index.get())])
+        img = test_images[int(index.get())]
+        x = int(combined.knn_pred(torch.from_numpy(test_images[int(index.get())])))
         text = f"Real label: {test_labels[int(index.get())]}\nKNN prediction: {x}"
-
-    print(x)
 
     output = Label(root, text=text)
     output.grid(row=3, column=2)
+
+    for j in range(28):
+        for i in range(28):
+            color = rgb_hack((int(img[i, j]), int(img[i, j]), int(img[i, j])))
+            canvas.create_rectangle(j*10, i*10, j*10+10, i*10+10, outline=color, fill=color) 
 
 
 def run_nbc():
     text = ""
-    if use_drawing:
+    img = None
+
+    if use_drawing.get():
+        img = imgdata
         x = combined.naive_bayes_pred(torch.from_numpy(imgdata))
         text = f"Naive Bayes prediction: {x}"
     else:
-        x = combined.naive_bayes_pred(test_images[int(index.get())])
+        img = test_images[int(index.get())]
+        x = combined.naive_bayes_pred(torch.from_numpy(test_images[int(index.get())]))
         text = f"Real label: {test_labels[int(index.get())]}\nNaive Bayes prediction: {x}"
-
-    print(x)
 
     output = Label(root, text=text)
     output.grid(row=3, column=2)
+
+    for j in range(28):
+        for i in range(28):
+            color = rgb_hack((int(img[i, j]), int(img[i, j]), int(img[i, j])))
+            canvas.create_rectangle(j*10, i*10, j*10+10, i*10+10, outline=color, fill=color) 
 
 
 def run_cnn():
     text = ""
-    if use_drawing:
+    img = None
+
+    if use_drawing.get():
+        img = imgdata
         x = combined.cnn_pred(torch.from_numpy(imgdata)).argmax()
         text = f"CNN prediction: {x}"
     else:
-        x = combined.cnn_pred(test_images[int(index.get())]).argmax()
+        img = test_images[int(index.get())]
+        x = combined.cnn_pred(torch.from_numpy(test_images[int(index.get())])).argmax()
         text = f"Real label: {test_labels[int(index.get())]}\nCNN prediction: {x}"
-
-    print(x)
 
     output = Label(root, text=text)
     output.grid(row=3, column=2)
-    return
+
+    for j in range(28):
+        for i in range(28):
+            color = rgb_hack((int(img[i, j]), int(img[i, j]), int(img[i, j])))
+            canvas.create_rectangle(j*10, i*10, j*10+10, i*10+10, outline=color, fill=color) 
 
 
 def run_combined():
-    text = ""
-    if use_drawing:
-        x = combined.combined_out(torch.from_numpy(imgdata))
+    text = None
+    img = None
+
+    if use_drawing.get():
+        img = imgdata
+        x = combined.combined_out(torch.from_numpy(img))
         text = f"Combined prediction: {x}"
     else:
-        x = combined.combined_out(test_images[int(index.get())])
+        img = test_images[int(index.get())]
+        x = combined.combined_out(torch.from_numpy(img))
         text = f"Real label: {test_labels[int(index.get())]}\nCombined prediction: {x}"
-
-    print(x)
 
     output = Label(root, text=text)
     output.grid(row=3, column=2)
 
-   # plt.imshow(test_images[int(index.get())].reshape(28, 28))
-  #  plt.show()
-
-    return
+    for j in range(28):
+        for i in range(28):
+            color = rgb_hack((int(img[i, j]), int(img[i, j]), int(img[i, j])))
+            canvas.create_rectangle(j*10, i*10, j*10+10, i*10+10, outline=color, fill=color) 
 
 
 def rgb_hack(rgb):
