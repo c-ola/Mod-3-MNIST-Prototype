@@ -23,79 +23,93 @@ root = Tk()
 root.title("Machine Learning Models: Accuracy Testing")
 root.geometry("1200x700")
 
+
 def run_knn():
     print(combined.knn_pred(7))
-    # plt.imshow(test_images[7].reshape(28, 28))
-    # plt.show()
+
     def knn_predict():
         x = combined.knn_pred(int(index.get()))
         print(x)
 
         output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nKNN predicted label: {x}")
-        output.grid(row=3, column=1)
+        output.grid(row=3, column=2)
 
         plt.imshow(test_images[int(index.get())].reshape(28, 28))
         plt.show()
 
     index = Entry(root, width=10)
-    index.grid(row=2, column=1)
+    index.grid(row=2, column=2)
 
     button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=knn_predict)
-    button_index.grid(row=1, column=1)
+    button_index.grid(row=1, column=2)
+
 
 def run_nbc():
     def nbc_predict():
         x = combined.naive_bayes_pred(int(index.get()))
         print(x)
 
-        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nPredicted label: {x}")
-        output.grid(row=3, column=1)
+        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nNBC predicted label: {x}")
+        output.grid(row=3, column=2)
 
         plt.imshow(test_images[int(index.get())].reshape(28, 28))
         plt.show()
 
     index = Entry(root, width=10)
-    index.grid(row=2, column=1)
+    index.grid(row=2, column=2)
 
     button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=nbc_predict)
-    button_index.grid(row=1, column=1)
-
-
-
-
-
+    button_index.grid(row=1, column=2)
 
 
 def run_cnn():
     def cnn_predict():
-        #x = combined.cnn_pred(int(index.get().argmax()))
-
         x = int(combined.cnn_pred(int(index.get())).argmax())
-
         print(x)
 
-        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nPredicted label: {x}")
-        output.grid(row=3, column=1)
+        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nCNN predicted label: {x}")
+        output.grid(row=3, column=2)
 
         plt.imshow(test_images[int(index.get())].reshape(28, 28))
         plt.show()
 
     index = Entry(root, width=10)
-    index.grid(row=2, column=1)
+    index.grid(row=2, column=2)
 
     button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=cnn_predict)
-    button_index.grid(row=1, column=1)
+    button_index.grid(row=1, column=2)
     return
+
 
 def run_combined():
     print(combined.combined_out(7))
+
+    def combined_predict():
+        x = combined.combined_out(int(index.get()))
+        print(x)
+
+        output = Label(root, text=f"Real label: {test_labels[int(index.get())]}\nCombined prediction: {x}")
+        output.grid(row=3, column=2)
+
+        plt.imshow(test_images[int(index.get())].reshape(28, 28))
+        plt.show()
+
+    index = Entry(root, width=10)
+    index.grid(row=2, column=2)
+
+    button_index = Button(root, text="Enter an index for the MNIST dataset", padx=40, pady=20, command=combined_predict)
+    button_index.grid(row=1, column=2)
+
     return
+
 
 def rgb_hack(rgb):
     return "#%02x%02x%02x" % rgb
 
+
 def scale(r, rmin, rmax, tmin, tmax):
     return ((r - rmin)/(rmax - rmin)) * (tmax -tmin) + tmin
+
 
 def decreaseBrushWidth():
     global brush_width
@@ -103,17 +117,20 @@ def decreaseBrushWidth():
     if brush_width > minBrush + 1:
         brush_width-=1
 
+
 def increaseBrushWidth():
     global brush_width
     maxBrush = 20
     if brush_width < maxBrush:
         brush_width+=1
 
+
 def resetCanvas():
     global imgdata
     root.update()
     imgdata = np.zeros((28, 28))    
     canvas.delete('all')
+
 
 def drawOnCanvas(e):
     root.update()
@@ -153,7 +170,9 @@ def drawOnCanvas(e):
 def test_drawing():
     print(np.array(imgdata).reshape(1, 28, 28))
     model = combined_model_final.Combined(np.array(imgdata).reshape(1, 28, 28), [0])
-    print(f"Prediction for drawing: {model.combined_out(0)}")
+
+    prediction = Label(root, text=f"Prediction for drawing: {model.combined_out(0)}")
+    prediction.grid(row=5, column=0)
 
 #canvas stuff
 brush_width = 5
