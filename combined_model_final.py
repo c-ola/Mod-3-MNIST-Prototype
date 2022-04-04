@@ -65,8 +65,6 @@ cnn.load_state_dict(torch.load('Pytorch MNIST CNN'))
 """#Naive Bayes"""
 
 from tensorflow.keras.datasets import mnist
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import confusion_matrix
 
@@ -89,13 +87,12 @@ mnb.score(x_train,y_train)
 """#KNN"""
 
 import tensorflow as tf
-from tensorflow import keras
 import numpy as np
 import matplotlib.pyplot as plt
 
 #download MNIST dataset
-keras.datasets.mnist.load_data(path="mnist.npz")
-(trImages, trLabels), (tImages, tLabels) = keras.datasets.mnist.load_data()
+mnist.load_data(path="mnist.npz")
+(trImages, trLabels), (tImages, tLabels) = mnist.load_data()
 numTrainImages = np.shape(trLabels)[0]
 numTestImages = np.shape(tLabels)[0]
 
@@ -129,18 +126,15 @@ class Combined():
     self.test_labels = torch.tensor(test_labels)
 
 
-  def cnn_pred(self, index):
+  def cnn_pred(self, image):
 
-    #image = self.test_images[index]
-    image = index
     prediction = cnn.forward(image)
 
     return prediction # outputs a 1x10 tensor of 
 
 
-  def naive_bayes_pred(self, index):
-    #image = self.test_images[index]
-    image = index
+  def naive_bayes_pred(self, image):
+
     image = image.reshape(28*28, ).numpy().astype(int)
 
     prediction = mnb.predict([image])
@@ -148,10 +142,8 @@ class Combined():
     return int(prediction)
 
 
-  def knn_pred(self, index):
+  def knn_pred(self, image):
 
-    #image = self.test_images[index]
-    image = index
     image = image.reshape(28, 28).numpy()
 
     arrayKNNLabels = np.array([])
@@ -171,11 +163,11 @@ class Combined():
     return prediction
 
 
-  def combined_out(self, index):
+  def combined_out(self, image):
 
-    cnn_out = int(self.cnn_pred(index).argmax())
-    bayes_out = int(self.naive_bayes_pred(index))
-    knn_out = int(self.knn_pred(index))
+    cnn_out = int(self.cnn_pred(image).argmax())
+    bayes_out = int(self.naive_bayes_pred(image))
+    knn_out = int(self.knn_pred(image))
 
     points_cnn = 1 # bias towards most accurate network
     points_bayes = 0
